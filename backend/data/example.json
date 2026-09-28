@@ -1,0 +1,67 @@
+{
+  "student_context": {
+    "primary_concern": "Academic and career-related stress",
+    
+    "concerns": [
+      {
+        "area": "academic_stress",
+        "level": "high",
+        "evidence": "Student mentioned upcoming exams and feeling stressed about them."
+      },
+      {
+        "area": "career_stress",
+        "level": "moderate",
+        "evidence": "Student reported worrying about placements."
+      },
+      {
+        "area": "sleep",
+        "level": "moderate",
+        "evidence": "Student reported difficulty sleeping because they continue thinking about their problems at night."
+      }
+    ],
+
+    "duration": "Not specified",
+
+    "impact": [
+      "Sleep is being affected",
+      "Persistent worrying at night"
+    ],
+
+    "coping_strategies": [
+      "Talks to roommate"
+    ],
+
+    "support_system": {
+      "available": true,
+      "details": "Student reports talking to their roommate for support."
+    },
+
+    "student_preferences": {
+      "preferred_support": "Not specified"
+    },
+
+    "safety": {
+      "concern_disclosed": false,
+      "status": "No safety concern disclosed in conversation"
+    },
+
+    "student_quotes": [
+      "I've been really stressed lately.",
+      "I keep thinking about everything at night."
+    ],
+
+    "areas_to_explore": [
+      "Academic pressure and fear of failure",
+      "Career/placement uncertainty",
+      "Sleep difficulties",
+      "Current coping and support"
+    ],
+
+    "support_routing_tags": [
+      "academic_support",
+      "career_support",
+      "wellbeing_support",
+      "sleep_support"
+    ]
+  }
+}
