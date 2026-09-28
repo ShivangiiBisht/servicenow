@@ -1,0 +1,2219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#EAF1F3">
+  <title>Stillroom: support for students, whenever you need it</title>
+  <meta name="description" content="A calm place for students to breathe, check in with themselves, and reach a counselor when things pile up.">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Literata:opsz,wght@7..72,400;7..72,500;7..72,600&display=swap" rel="stylesheet">
+
+  <style>
+/* ==========================================================================
+   Stillroom: base, layout and landing page styles
+   Palette
+   --mist      page background, a cool pale blue-grey
+   --tide      main text and solid buttons, a deep sea blue
+   --seaglass  the breathing orb
+   --lilac     halo around the orb, quiet accents
+   --dusk      the panic button, the one saturated colour on the page
+   ========================================================================== */
+
+:root {
+  --mist: #eaf1f3;
+  --surface: #f6f9fa;
+  --tide: #1e3b4c;
+  --tide-deep: #142a37;
+  --tide-soft: #46606f;
+  --seaglass: #a9cfc4;
+  --sage-wash: #dcebe6;
+  --lilac: #d9d3ec;
+  --dusk: #54489c;
+  --dusk-deep: #43397f;
+  --line: rgba(30, 59, 76, 0.16);
+
+  --font-body: "Atkinson Hyperlegible", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --font-display: "Literata", Georgia, "Times New Roman", serif;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: var(--mist);
+  color: var(--tide);
+  font-family: var(--font-body);
+  font-size: 1.125rem;
+  line-height: 1.6;
+  overflow-x: clip;
+}
+
+body:has(dialog[open]) {
+  overflow: hidden;
+}
+
+h1,
+h2,
+h3 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 500;
+  line-height: 1.15;
+}
+
+p {
+  margin: 0;
+}
+
+a {
+  color: inherit;
+}
+
+:focus-visible {
+  outline: 3px solid var(--dusk);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+.skip-link {
+  position: absolute;
+  left: 1rem;
+  top: -4rem;
+  z-index: 100;
+  padding: 0.75rem 1rem;
+  background: var(--tide);
+  color: #fff;
+  border-radius: 8px;
+}
+
+.skip-link:focus {
+  top: 1rem;
+}
+
+.wrap {
+  width: min(1120px, 100% - 2.5rem);
+  margin-inline: auto;
+}
+
+/* ---------- Buttons ---------- */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  min-height: 48px;
+  padding: 0.7rem 1.4rem;
+  border: 2px solid transparent;
+  border-radius: 999px;
+  font: inherit;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.btn--solid {
+  background: var(--tide);
+  color: #fff;
+}
+
+.btn--solid:hover {
+  background: var(--tide-deep);
+}
+
+.btn--quiet {
+  background: transparent;
+  color: var(--tide);
+}
+
+.btn--quiet:hover {
+  background: rgba(30, 59, 76, 0.08);
+}
+
+.btn--outline {
+  border-color: var(--tide);
+  background: transparent;
+  color: var(--tide);
+}
+
+.btn--outline:hover {
+  background: rgba(30, 59, 76, 0.08);
+}
+
+.btn--panic {
+  min-height: 64px;
+  padding: 1.05rem 2rem;
+  background: var(--dusk);
+  color: #fff;
+  font-size: 1.2rem;
+  box-shadow: 0 12px 28px -14px rgba(84, 72, 156, 0.7);
+}
+
+.btn--panic:hover {
+  background: var(--dusk-deep);
+}
+
+.text-link {
+  display: inline-block;
+  margin-top: 1rem;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--tide);
+  font: inherit;
+  font-weight: 700;
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.25em;
+  cursor: pointer;
+}
+
+.text-link:hover {
+  color: var(--dusk);
+}
+
+/* ---------- Header ---------- */
+
+.site-header .wrap {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  padding-block: 1.25rem;
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-inline-end: auto;
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.main-nav ul {
+  display: flex;
+  gap: 1.75rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.main-nav a {
+  text-decoration: none;
+  padding-block: 0.4rem;
+  border-bottom: 2px solid transparent;
+}
+
+.main-nav a:hover {
+  border-bottom-color: var(--tide);
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* ---------- Hero ---------- */
+
+.hero .wrap {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+  align-items: center;
+  gap: clamp(2rem, 6vw, 5rem);
+  padding-block: clamp(2rem, 6vw, 4.5rem) clamp(3rem, 8vw, 6rem);
+}
+
+.hero h1 {
+  max-width: 13ch;
+  font-size: clamp(2.7rem, 6.2vw, 4.6rem);
+  letter-spacing: -0.015em;
+}
+
+.hero-lede {
+  max-width: 34rem;
+  margin-top: 1.5rem;
+  color: var(--tide-soft);
+  font-size: 1.25rem;
+}
+
+.hero-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.9rem;
+  margin-top: 2.25rem;
+}
+
+.hero-note,
+.hero-account {
+  color: var(--tide-soft);
+  font-size: 1rem;
+}
+
+.hero-account {
+  margin-top: 2rem;
+}
+
+.hero-visual {
+  display: grid;
+  justify-items: center;
+  gap: 2.5rem;
+  padding-block: 1.5rem;
+}
+
+/* The one memorable element: a slow breathing orb.
+   10s cycle = 4s in (0 to 40%), 6s out (40% to 100%). */
+
+.orb {
+  width: min(340px, 58vw);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 34% 30%,
+    #f4f9f7 0,
+    #cfe6de 28%,
+    var(--seaglass) 58%,
+    #78aca0 100%
+  );
+  box-shadow:
+    0 0 0 clamp(14px, 2.6vw, 22px) rgba(217, 211, 236, 0.7),
+    0 0 0 clamp(30px, 5.6vw, 52px) rgba(217, 211, 236, 0.32);
+  animation: breathe 10s ease-in-out infinite;
+}
+
+@keyframes breathe {
+  0%,
+  100% {
+    transform: scale(0.86);
+  }
+  40% {
+    transform: scale(1);
+  }
+}
+
+.orb-caption {
+  max-width: 20rem;
+  color: var(--tide-soft);
+  font-size: 1rem;
+  text-align: center;
+}
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 860px) {
+  .site-header .wrap {
+      flex-wrap: wrap;
+      gap: 0.75rem 1rem;
+    }
+
+  .main-nav {
+      order: 3;
+      width: 100%;
+      overflow-x: auto;
+    }
+
+  .main-nav ul {
+      gap: 1.5rem;
+      white-space: nowrap;
+    }
+
+  .hero .wrap {
+      grid-template-columns: 1fr;
+    }
+
+  .hero h1 {
+      max-width: 16ch;
+    }
+}
+
+@media (max-width: 480px) {
+  .btn--panic {
+      width: 100%;
+    }
+
+  .hero-actions {
+      align-items: stretch;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+      scroll-behavior: auto;
+    }
+
+  .orb {
+      animation: none;
+      transform: scale(0.94);
+    }
+}
+
+/* ==========================================================================
+   Stillroom: panic support dialog
+   Loaded after styles.css and uses its colour tokens.
+   ========================================================================== */
+
+.panic {
+  width: min(640px, calc(100vw - 1.5rem));
+  max-height: calc(100svh - 1.5rem);
+  padding: 0;
+  border: 0;
+  border-radius: 28px;
+  background: var(--surface);
+  color: var(--tide);
+  overflow: auto;
+}
+
+.panic::backdrop {
+  background: rgba(30, 59, 76, 0.55);
+  backdrop-filter: blur(6px);
+}
+
+.panic[open] {
+  animation: panic-in 0.35s ease-out;
+}
+
+@keyframes panic-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.panic-shell {
+  padding: clamp(1.25rem, 4vw, 2rem);
+}
+
+/* ---------- Top bar: tabs + close ---------- */
+
+.panic-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.panic-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.panic-tab {
+  min-height: 44px;
+  padding: 0.5rem 1rem;
+  border: 2px solid transparent;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--tide-soft);
+  font: inherit;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.panic-tab:hover {
+  background: rgba(30, 59, 76, 0.07);
+}
+
+.panic-tab[aria-selected="true"] {
+  background: var(--lilac);
+  color: var(--tide);
+}
+
+.panic-close {
+  flex-shrink: 0;
+  min-height: 44px;
+  padding: 0.5rem 1rem;
+  border: 2px solid var(--line);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--tide);
+  font: inherit;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.panic-close:hover {
+  background: rgba(30, 59, 76, 0.07);
+}
+
+/* ---------- Panels ---------- */
+
+.panic-panel {
+  padding-top: clamp(1.5rem, 4vw, 2.25rem);
+}
+
+.panic-panel[hidden] {
+  display: none;
+}
+
+.panic-panel h2 {
+  font-size: clamp(1.7rem, 4.5vw, 2.2rem);
+}
+
+.panic-lede {
+  max-width: 32rem;
+  margin-top: 0.75rem;
+  color: var(--tide-soft);
+}
+
+.panic-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 2rem;
+}
+
+/* ---------- Breathing circle ---------- */
+
+.breath {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: min(240px, 60vw);
+  aspect-ratio: 1;
+  margin: 2rem auto 0;
+}
+
+.breath-ring {
+  position: absolute;
+  inset: 0;
+  border: 2px solid rgba(84, 72, 156, 0.35);
+  border-radius: 50%;
+}
+
+.breath-circle {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 34% 30%,
+    #f4f9f7 0,
+    #cfe6de 30%,
+    var(--seaglass) 62%,
+    #78aca0 100%
+  );
+  transform: scale(0.55);
+  transition: transform var(--phase-secs, 4s) ease-in-out;
+}
+
+.breath-circle.is-in {
+  transform: scale(1);
+}
+
+.breath-circle.is-out {
+  transform: scale(0.55);
+}
+
+.breath-text {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  text-align: center;
+}
+
+.breath-label {
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.breath-count {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  line-height: 1.1;
+}
+
+/* ---------- Grounding steps ---------- */
+
+.ground {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 1.5rem;
+  margin-top: 2rem;
+  padding: 1.5rem;
+  border-radius: 20px;
+  background: var(--sage-wash);
+}
+
+.ground-count {
+  min-width: 1.2ch;
+  color: var(--dusk);
+  font-family: var(--font-display);
+  font-size: 4.5rem;
+  line-height: 1;
+}
+
+.ground-count:empty {
+  display: none;
+}
+
+.ground:has(.ground-count:empty) {
+  grid-template-columns: 1fr;
+}
+
+.ground-prompt {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  line-height: 1.25;
+}
+
+.ground-hint {
+  margin-top: 0.4rem;
+  color: var(--tide-soft);
+  font-size: 1rem;
+}
+
+.ground-dots {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1.25rem;
+}
+
+.ground-dots span {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--line);
+}
+
+.ground-dots span.is-done {
+  background: var(--dusk);
+}
+
+/* ---------- Talk to someone ---------- */
+
+.talk-list {
+  display: grid;
+  gap: 0.75rem;
+  margin: 2rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.talk-list li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem 1rem;
+  padding: 1rem 1.25rem;
+  border-radius: 18px;
+  background: var(--sage-wash);
+}
+
+.talk-script {
+  max-width: 32rem;
+  margin-top: 1.5rem;
+  color: var(--tide-soft);
+}
+
+@media (max-width: 480px) {
+  .panic-top {
+      flex-direction: column-reverse;
+      align-items: stretch;
+    }
+
+  .panic-close {
+      align-self: flex-end;
+    }
+
+  .ground {
+      grid-template-columns: 1fr;
+      gap: 0.5rem;
+    }
+
+  .panic-actions .btn {
+      flex: 1 1 100%;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .panic[open] {
+      animation: none;
+    }
+
+  /* No movement: the circle stays put and only dims and brightens with the label. */
+
+  .breath-circle,
+  .breath-circle.is-in,
+  .breath-circle.is-out {
+      transform: scale(0.8);
+      transition: none;
+    }
+
+  .breath-circle.is-out {
+      opacity: 0.5;
+    }
+}
+
+/* ==========================================================================
+   Role buttons and log in / sign up dialog
+   ========================================================================== */
+
+.text-link--inline {
+  margin-top: 0;
+}
+
+/* ---------- Hero: choose a role ---------- */
+
+.roles {
+  margin-top: 2.5rem;
+  padding-top: 1.75rem;
+  border-top: 1px solid var(--line);
+}
+
+.roles-label {
+  color: var(--tide-soft);
+  font-size: 1rem;
+}
+
+.role-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-block: 0.75rem 1rem;
+}
+
+/* ---------- Log in / sign up dialog ---------- */
+
+.auth {
+  width: min(560px, calc(100vw - 1.5rem));
+  max-height: calc(100svh - 1.5rem);
+  padding: 0;
+  border: 0;
+  border-radius: 28px;
+  background: var(--surface);
+  color: var(--tide);
+  overflow: auto;
+}
+
+.auth::backdrop {
+  background: rgba(30, 59, 76, 0.55);
+  backdrop-filter: blur(6px);
+}
+
+.auth[open] {
+  animation: panic-in 0.35s ease-out;
+}
+
+.auth-shell {
+  padding: clamp(1.25rem, 4vw, 2.25rem);
+}
+
+.auth-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.auth-top h2 {
+  font-size: clamp(1.7rem, 4.5vw, 2.2rem);
+}
+
+.auth-lede {
+  max-width: 30rem;
+  margin-top: 0.75rem;
+  color: var(--tide-soft);
+}
+
+.auth form {
+  margin-top: 1.75rem;
+}
+
+.role-switch {
+  margin: 0 0 1.5rem;
+  padding: 0;
+  border: 0;
+}
+
+.role-switch legend {
+  margin-bottom: 0.5rem;
+  padding: 0;
+  font-weight: 700;
+}
+
+.segments {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.25rem;
+  padding: 0.25rem;
+  border-radius: 999px;
+  background: var(--mist);
+}
+
+.segment {
+  position: relative;
+}
+
+.segment input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.segment span {
+  display: grid;
+  place-items: center;
+  min-height: 48px;
+  border-radius: 999px;
+  font-weight: 700;
+  transition: background-color 0.2s ease;
+}
+
+.segment input:checked + span {
+  background: var(--tide);
+  color: #fff;
+}
+
+.segment input:focus-visible + span {
+  outline: 3px solid var(--dusk);
+  outline-offset: 3px;
+}
+
+.field {
+  display: grid;
+  gap: 0.4rem;
+  margin-bottom: 1.25rem;
+}
+
+.field[hidden] {
+  display: none;
+}
+
+.field label {
+  font-weight: 700;
+}
+
+.field input {
+  width: 100%;
+  min-height: 52px;
+  padding: 0.6rem 1rem;
+  border: 2px solid rgba(30, 59, 76, 0.35);
+  border-radius: 14px;
+  background: #fff;
+  color: var(--tide);
+  font: inherit;
+}
+
+.field input:focus-visible {
+  border-color: var(--dusk);
+  outline: 3px solid rgba(84, 72, 156, 0.3);
+  outline-offset: 0;
+}
+
+.hint {
+  color: var(--tide-soft);
+  font-size: 0.95rem;
+}
+
+.hint[hidden] {
+  display: none;
+}
+
+.password-row {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.toggle {
+  flex-shrink: 0;
+  min-width: 72px;
+  border: 2px solid var(--line);
+  border-radius: 14px;
+  background: transparent;
+  color: var(--tide);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.toggle:hover {
+  background: rgba(30, 59, 76, 0.07);
+}
+
+.auth-submit {
+  width: 100%;
+  margin-top: 0.5rem;
+}
+
+.dev-note {
+  margin-top: 0.75rem;
+  color: var(--tide-soft);
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.auth-switch {
+  margin-top: 1.25rem;
+  color: var(--tide-soft);
+  font-size: 1rem;
+  text-align: center;
+}
+
+.auth-done {
+  display: grid;
+  justify-items: start;
+  gap: 1rem;
+  margin-top: 1.75rem;
+}
+
+.auth-done[hidden],
+.auth form[hidden] {
+  display: none;
+}
+
+.auth-done h3 {
+  font-size: 1.8rem;
+}
+
+.auth-done p {
+  max-width: 28rem;
+  color: var(--tide-soft);
+}
+
+.auth-help {
+  display: grid;
+  justify-items: start;
+  gap: 0.25rem;
+  margin-top: 1.75rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--line);
+  color: var(--tide-soft);
+  font-size: 1rem;
+}
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 480px) {
+  .role-buttons .btn {
+      flex: 1 1 100%;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .auth[open] {
+      animation: none;
+    }
+}
+
+/* ==========================================================================
+   Counsellor workspace (next stage). Reuses the tokens, buttons, dialogs and
+   form styles above; only adds what the dashboard needs.
+   ========================================================================== */
+
+body:has(.ws:not([hidden])) { overflow: hidden; }
+
+.ws {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  overflow: auto;
+  background: var(--mist);
+}
+.ws[hidden] { display: none; }
+.ws:not([hidden]) { animation: panic-in 0.35s ease-out; }
+
+.ws-tag {
+  padding: 0.25rem 0.8rem;
+  border-radius: 999px;
+  background: var(--lilac);
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+.ws-header .wrap { display: flex; align-items: center; gap: 1rem 1.5rem; flex-wrap: wrap; padding-block: 1.25rem; }
+.ws-header .brand { margin-inline-end: 0; }
+.ws-header .main-nav { margin-inline-start: auto; }
+.ws-main { padding-bottom: 5rem; }
+
+.ws-intro { padding-block: clamp(1rem, 4vw, 2.5rem) 1.5rem; }
+.ws-intro h1 { font-size: clamp(2.2rem, 5vw, 3.4rem); letter-spacing: -0.015em; max-width: 20ch; }
+.ws-eyebrow { margin-bottom: 0.75rem; color: var(--tide-soft); font-size: 0.95rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
+.ws-lede { max-width: 38rem; margin-top: 1rem; color: var(--tide-soft); }
+.ws-glance { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-top: 1.5rem; }
+.ws-glance span { padding: 0.4rem 1rem; border-radius: 999px; background: var(--surface); border: 1px solid var(--line); font-size: 1rem; font-weight: 700; }
+
+.ws-section { margin-top: clamp(2rem, 5vw, 3.25rem); scroll-margin-top: 1rem; }
+.ws-section > h2 { font-size: clamp(1.5rem, 3.4vw, 2rem); }
+.ws-section-lede { margin-top: 0.4rem; margin-bottom: 1.25rem; color: var(--tide-soft); font-size: 1rem; }
+.ws-two { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr); gap: 1.25rem; align-items: start; }
+.ws-groups { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.25rem; }
+
+.card {
+  display: grid;
+  gap: 1rem;
+  align-content: start;
+  padding: clamp(1.25rem, 3vw, 1.75rem);
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  background: var(--surface);
+}
+.card--priority { border: 2px solid var(--dusk); box-shadow: 0 16px 36px -22px rgba(84, 72, 156, 0.6); }
+.card h3 { font-size: 1.5rem; }
+.card-top { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.5rem 1rem; }
+.card-sub { color: var(--tide-soft); font-size: 1rem; }
+.card-actions { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-top: 0.25rem; }
+.card-actions .btn { min-height: 44px; padding: 0.5rem 1.15rem; font-size: 1rem; }
+
+.sev {
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  padding: 0.15rem 0.75rem; border-radius: 999px;
+  font-size: 0.85rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; white-space: nowrap;
+}
+.sev--high { background: var(--dusk); color: #fff; }
+.sev--moderate { background: var(--lilac); color: var(--tide); }
+.sev--low { background: var(--sage-wash); border: 1px solid var(--seaglass); color: var(--tide); }
+.sev--done { background: var(--sage-wash); border: 1px solid var(--seaglass); color: var(--tide); }
+.sev--sched { background: transparent; border: 2px solid var(--dusk); color: var(--dusk); }
+
+.panel { padding: 1rem 1.25rem; border-radius: 18px; background: var(--sage-wash); }
+.panel h4, .label { margin: 0 0 0.4rem; font-size: 0.9rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--tide-soft); }
+.panel--lilac { background: rgba(217, 211, 236, 0.55); }
+.dots { margin: 0; padding: 0; list-style: none; display: grid; gap: 0.35rem; }
+.dots li { display: flex; gap: 0.6rem; align-items: baseline; }
+.dots li::before { content: ""; flex: none; width: 8px; height: 8px; border-radius: 50%; background: var(--dusk); transform: translateY(-1px); }
+.pattern { font-family: var(--font-display); font-size: 1.1rem; }
+
+.student-list { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 0; padding: 0; list-style: none; }
+.student-list li { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.3rem 0.4rem 0.3rem 0.85rem; border-radius: 999px; background: var(--mist); font-weight: 700; font-size: 1rem; }
+.session-line { display: flex; flex-wrap: wrap; gap: 0.25rem 0.75rem; align-items: center; }
+.session-line strong { font-family: var(--font-display); font-weight: 500; font-size: 1.15rem; }
+
+.deadline { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+.deadline b { display: block; font-family: var(--font-display); font-weight: 500; font-size: 1.15rem; }
+
+.choices { display: grid; gap: 0.5rem; margin: 0; padding: 0; border: 0; }
+.choices legend { padding: 0; margin-bottom: 0.5rem; font-weight: 700; }
+.choice { display: flex; gap: 0.7rem; align-items: center; min-height: 48px; padding: 0.5rem 1rem; border: 2px solid var(--line); border-radius: 14px; background: #fff; cursor: pointer; }
+.choice input { accent-color: var(--dusk); width: 20px; height: 20px; margin: 0; }
+.choice:has(input:checked) { border-color: var(--dusk); background: rgba(217, 211, 236, 0.5); }
+.choice:has(input:focus-visible) { outline: 3px solid var(--dusk); outline-offset: 3px; }
+
+.field select, .field textarea {
+  width: 100%; padding: 0.6rem 1rem; border: 2px solid rgba(30, 59, 76, 0.35); border-radius: 14px;
+  background: #fff; color: var(--tide); font: inherit;
+}
+.field select { min-height: 52px; }
+.field textarea { min-height: 130px; resize: vertical; }
+.field select:focus-visible, .field textarea:focus-visible { border-color: var(--dusk); outline: 3px solid rgba(84, 72, 156, 0.3); outline-offset: 0; }
+.field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0 1rem; }
+.form-error { color: var(--dusk-deep); font-weight: 700; }
+.form-error[hidden] { display: none; }
+
+.back { margin: 0 0 1rem; }
+.chart { width: 100%; height: auto; }
+.chart text { fill: var(--tide-soft); font-family: var(--font-body); font-size: 12px; }
+.saved-note { padding: 0.75rem 1.1rem; border-radius: 14px; background: var(--sage-wash); border: 1px solid var(--seaglass); font-weight: 700; }
+
+.toast {
+  width: max-content; text-align: center;
+  position: fixed; left: 50%; bottom: 1.5rem; z-index: 200; max-width: calc(100vw - 2rem);
+  padding: 0.8rem 1.4rem; border-radius: 999px; background: var(--tide); color: #fff; font-weight: 700;
+  transform: translate(-50%, 1rem); opacity: 0; pointer-events: none; transition: opacity 0.25s ease, transform 0.25s ease;
+}
+.toast.is-on { opacity: 1; transform: translate(-50%, 0); }
+
+@media (max-width: 860px) {
+  .ws-two, .ws-groups { grid-template-columns: 1fr; }
+  .ws-header .main-nav { order: 3; width: 100%; margin-inline-start: 0; overflow-x: auto; }
+  .ws-header .header-actions { margin-inline-start: auto; }
+}
+@media (max-width: 480px) {
+  .card-actions .btn { flex: 1 1 100%; }
+  .deadline, .field-row { grid-template-columns: 1fr; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ws:not([hidden]) { animation: none; }
+  .toast { transition: none; }
+}
+
+.ws-groupbody { display: grid; gap: 1rem; margin-top: 1.25rem; }
+
+/* ---------- Section-wise workspace: tabs, path, attention list ---------- */
+.ws-tabs { display: flex; gap: 0.25rem; margin-inline-start: auto; }
+.ws-header .wrap { flex-wrap: nowrap; gap: 0.75rem 1rem; }
+.ws-header .ws-tag { display: none; }
+.ws-header .header-actions .btn { min-height: 44px; padding: 0.4rem 1.1rem; }
+.ws-header .header-actions .btn { white-space: nowrap; }
+@media (max-width: 860px) { .ws-header .wrap { flex-wrap: wrap; } .ws-header .header-actions { margin-inline-start: auto; } }
+.ws-tabs .panic-tab { padding-inline: 0.8rem; display: inline-flex; align-items: center; gap: 0.5rem; white-space: nowrap; }
+.tab-badge {
+  display: inline-grid; place-items: center; min-width: 1.4rem; height: 1.4rem; padding: 0 0.35rem;
+  border-radius: 999px; background: var(--dusk); color: #fff; font-size: 0.8rem; line-height: 1;
+}
+.tab-badge--quiet { background: var(--tide-soft); }
+.ws-view { animation: panic-in 0.3s ease-out; }
+
+.view-head { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 0.75rem 1.5rem; margin-bottom: 1.25rem; }
+.view-head h2 { font-size: clamp(1.8rem, 4vw, 2.5rem); }
+.view-head p { max-width: 36rem; margin-top: 0.4rem; color: var(--tide-soft); }
+
+.stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.9rem; margin-top: 1.5rem; }
+.stat {
+  display: grid; gap: 0.15rem; padding: 1rem 1.25rem; border: 1px solid var(--line); border-radius: 20px;
+  background: var(--surface); color: inherit; font: inherit; text-align: left; cursor: pointer;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+.stat:hover { transform: translateY(-2px); border-color: var(--dusk); }
+.stat b { font-family: var(--font-display); font-weight: 500; font-size: 2rem; line-height: 1.1; }
+.stat span { color: var(--tide-soft); font-size: 1rem; }
+.stat--alert { border-color: var(--dusk); background: rgba(217, 211, 236, 0.5); }
+
+.path { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0.75rem; margin: 0; padding: 0; list-style: none; counter-reset: step; }
+.path li { position: relative; }
+.path button {
+  display: grid; gap: 0.5rem; justify-items: start; width: 100%; height: 100%; padding: 0.9rem 1rem;
+  border: 2px solid var(--line); border-radius: 18px; background: #fff; color: inherit; font: inherit; text-align: left; cursor: pointer;
+}
+.path button:hover { border-color: var(--tide-soft); }
+.path .n {
+  display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%;
+  border: 2px solid var(--line); font-weight: 700; font-size: 0.95rem;
+}
+.path .t { font-weight: 700; line-height: 1.25; }
+.path .s { color: var(--tide-soft); font-size: 0.9rem; }
+.path .is-done .n { background: var(--seaglass); border-color: var(--seaglass); }
+.path .is-done button { background: var(--sage-wash); border-color: transparent; }
+.path .is-next button { border-color: var(--dusk); box-shadow: 0 10px 24px -16px rgba(84, 72, 156, 0.7); }
+.path .is-next .n { background: var(--dusk); border-color: var(--dusk); color: #fff; }
+
+.path-stack .path { grid-template-columns: 1fr; }
+.attn { display: grid; gap: 0.6rem; margin: 0; padding: 0; list-style: none; }
+.attn-row {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 1rem; width: 100%; padding: 0.9rem 1.1rem;
+  border: 1px solid var(--line); border-radius: 18px; background: var(--surface); color: inherit; font: inherit; text-align: left; cursor: pointer;
+  transition: border-color 0.2s ease, transform 0.2s ease;
+}
+.attn-row:hover { border-color: var(--dusk); transform: translateX(2px); }
+.attn-row .grow { flex: 1 1 14rem; }
+.attn-row strong { display: block; }
+.attn-row small { color: var(--tide-soft); font-size: 0.95rem; }
+.attn-row .go { font-weight: 700; text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 0.25em; }
+.attn-empty { padding: 1.5rem; border-radius: 18px; background: var(--sage-wash); text-align: center; }
+
+.sched-list, .log { display: grid; gap: 0.6rem; margin: 0; padding: 0; list-style: none; }
+.sched-item { display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem 0.9rem; padding: 0.75rem 1rem; border-radius: 16px; background: var(--mist); }
+.sched-item .when { flex: 1 1 11rem; }
+.sched-item strong { display: block; font-family: var(--font-display); font-weight: 500; }
+.sched-item small { color: var(--tide-soft); font-size: 0.95rem; }
+.sched-item .btn { min-height: 40px; padding: 0.3rem 1rem; font-size: 0.95rem; }
+.log li { display: flex; gap: 0.75rem; align-items: baseline; }
+.log time { flex: none; min-width: 5.2rem; color: var(--tide-soft); font-size: 0.95rem; }
+.log-empty { color: var(--tide-soft); }
+
+.meter { position: relative; height: 12px; border-radius: 999px; background: rgba(30, 59, 76, 0.12); overflow: hidden; }
+.meter > i { position: absolute; inset: 0 auto 0 0; border-radius: 999px; background: var(--dusk); transition: width 0.4s ease; }
+.meter--done > i { background: var(--seaglass); }
+.big-time { font-family: var(--font-display); font-size: clamp(2.2rem, 6vw, 3.2rem); line-height: 1.05; }
+.meter-legend { display: flex; justify-content: space-between; color: var(--tide-soft); font-size: 0.95rem; }
+
+.sig { border-radius: 14px; background: rgba(255, 255, 255, 0.6); }
+.sig summary { min-height: 44px; padding: 0.55rem 1rem; font-weight: 700; cursor: pointer; }
+.sig p { padding: 0 1rem 0.8rem; color: var(--tide-soft); font-size: 1rem; }
+.sig-list { display: grid; gap: 0.4rem; }
+
+.filters { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.roster { border-radius: 14px; background: var(--mist); }
+.roster summary { min-height: 44px; padding: 0.6rem 1rem; font-weight: 700; cursor: pointer; }
+.roster ul { display: grid; gap: 0.4rem; margin: 0; padding: 0 1rem 1rem; list-style: none; }
+.roster li { display: flex; justify-content: space-between; align-items: center; gap: 0.5rem; }
+
+@media (max-width: 860px) {
+  .ws-tabs { order: 3; width: 100%; margin-inline-start: 0; overflow-x: auto; padding-bottom: 0.25rem; }
+  .path { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 480px) {
+  .stats { grid-template-columns: 1fr; }
+  .path { grid-template-columns: 1fr; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ws-view { animation: none; }
+  .stat, .attn-row, .meter > i { transition: none; }
+  .stat:hover, .attn-row:hover { transform: none; }
+}
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to main content</a>
+
+  <header class="site-header">
+    <div class="wrap">
+      <a class="brand" href="index.html" aria-label="Stillroom home">
+        <svg class="brand-mark" width="30" height="30" viewBox="0 0 32 32" aria-hidden="true">
+          <circle cx="16" cy="16" r="15" fill="#D9D3EC"/>
+          <circle cx="16" cy="16" r="9" fill="#A9CFC4"/>
+        </svg>
+        <span>Stillroom</span>
+      </a>
+
+      <nav class="main-nav" aria-label="Main">
+        <ul>
+          <li><a href="#students">For students</a></li>
+          <li><a href="#counselors">For counselors</a></li>
+          <li><a href="#help">Urgent help</a></li>
+          <li><a href="#privacy">Privacy</a></li>
+        </ul>
+      </nav>
+
+      <div class="header-actions">
+        <button class="btn btn--quiet" type="button" data-open-auth="login">Log in</button>
+        <button class="btn btn--solid" type="button" data-open-auth="signup">Sign up</button>
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="wrap">
+        <div class="hero-copy">
+          <h1 id="hero-title">It's okay to stop and breathe.</h1>
+          <p class="hero-lede">
+            Stillroom is a place for students to calm down, check in with themselves,
+            and reach a real person when things pile up.
+          </p>
+
+          <div class="hero-actions">
+            <button class="btn btn--panic" type="button" id="hero-panic" data-open-panic>
+              <svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true" focusable="false">
+                <circle cx="13" cy="13" r="12" fill="none" stroke="currentColor" stroke-width="2" opacity=".55"/>
+                <circle cx="13" cy="13" r="6" fill="currentColor"/>
+              </svg>
+              I'm having a panic attack
+            </button>
+            <p class="hero-note">
+              Opens a guided breathing exercise. No account needed.
+            </p>
+          </div>
+
+          <div class="roles">
+            <p class="roles-label">Or get started as</p>
+            <div class="role-buttons">
+              <button class="btn btn--solid" type="button" data-open-auth="signup" data-role="student">I'm a student</button>
+              <button class="btn btn--outline" type="button" data-open-auth="signup" data-role="counselor">I'm a counselor</button>
+            </div>
+            <p class="hero-note">Already have an account? <button class="text-link text-link--inline" type="button" data-open-auth="login">Log in</button>.</p>
+          </div>
+        </div>
+
+        <div class="hero-visual">
+          <div class="orb" aria-hidden="true"></div>
+          <p class="orb-caption">Breathe in for 4, out for 6. Try it with the circle.</p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Log in / sign up dialog with the Student / Counselor switch -->
+  <dialog id="auth-dialog" class="auth" aria-labelledby="auth-title">
+    <div class="auth-shell">
+      <div class="auth-top">
+        <h2 id="auth-title">Welcome back</h2>
+        <button class="panic-close" type="button" data-close-auth>Close</button>
+      </div>
+      <p class="auth-lede" id="auth-lede"></p>
+
+      <form id="auth-form">
+        <fieldset class="role-switch">
+          <legend>I am a</legend>
+          <div class="segments">
+            <label class="segment"><input type="radio" name="role" value="student" checked><span>Student</span></label>
+            <label class="segment"><input type="radio" name="role" value="counselor"><span>Counselor</span></label>
+          </div>
+        </fieldset>
+
+        <div class="field" id="field-name">
+          <label for="auth-name">Full name</label>
+          <input id="auth-name" name="name" type="text" autocomplete="name" required>
+        </div>
+
+        <div class="field">
+          <label for="auth-email" id="auth-email-label">College email</label>
+          <input id="auth-email" name="email" type="email" autocomplete="email" required aria-describedby="auth-email-hint">
+          <p class="hint" id="auth-email-hint" hidden>Use the email your college gave you.</p>
+        </div>
+
+        <div class="field" id="field-org">
+          <label for="auth-org">College or organization</label>
+          <input id="auth-org" name="organization" type="text" autocomplete="organization" required>
+        </div>
+
+        <div class="field">
+          <label for="auth-password">Password</label>
+          <div class="password-row">
+            <input id="auth-password" name="password" type="password" autocomplete="current-password" required aria-describedby="auth-password-hint">
+            <button class="toggle" type="button" id="auth-toggle" aria-pressed="false">Show</button>
+          </div>
+          <p class="hint" id="auth-password-hint" hidden>At least 8 characters.</p>
+        </div>
+
+        <button class="btn btn--solid auth-submit" type="submit" id="auth-submit">Log in as a student</button>
+        <p class="dev-note">Preview only: nothing is sent anywhere yet.</p>
+
+        <p class="auth-switch">
+          <span id="auth-switch-text"></span>
+          <button class="text-link text-link--inline" type="button" id="auth-switch-btn"></button>
+        </p>
+      </form>
+
+      <div class="auth-done" id="auth-done" role="status" hidden>
+        <h3 id="auth-done-title"></h3>
+        <p id="auth-done-text"></p>
+        <button class="btn btn--outline" type="button" data-close-auth>Back to home</button>
+      </div>
+
+      <div class="auth-help">
+        <p>Having a hard time right now? You don't need an account for this.</p>
+        <button class="text-link text-link--inline" type="button" data-open-panic data-close-auth>Open the panic tool</button>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- ======================= Counsellor workspace ======================= -->
+  <div class="ws" id="ws" hidden role="region" aria-label="Stillroom counsellor workspace">
+    <header class="site-header ws-header">
+      <div class="wrap">
+        <a class="brand" href="#" data-ws-action="home" aria-label="Stillroom counsellor workspace home">
+          <svg class="brand-mark" width="30" height="30" viewBox="0 0 32 32" aria-hidden="true">
+            <circle cx="16" cy="16" r="15" fill="#D9D3EC"/>
+            <circle cx="16" cy="16" r="9" fill="#A9CFC4"/>
+          </svg>
+          <span>Stillroom</span>
+        </a>
+        <span class="ws-tag">Counsellor workspace</span>
+        <nav class="ws-tabs" id="ws-tabs" role="tablist" aria-label="Workspace sections"></nav>
+        <div class="header-actions">
+          <button class="btn btn--outline" type="button" data-ws-action="logout">Log out</button>
+        </div>
+      </div>
+    </header>
+    <main class="wrap ws-main" id="ws-root" tabindex="-1"></main>
+  </div>
+
+  <!-- Schedule dialog (used for groups and the 1:1) -->
+  <dialog id="sched-dialog" class="auth" aria-labelledby="sched-title">
+    <div class="auth-shell">
+      <div class="auth-top">
+        <h2 id="sched-title"></h2>
+        <button class="panic-close" type="button" data-close-dialog>Close</button>
+      </div>
+      <p class="auth-lede" id="sched-lede"></p>
+      <form id="sched-form">
+        <div class="field-row">
+          <div class="field"><label for="sched-date">Date</label><input id="sched-date" type="date" required></div>
+          <div class="field"><label for="sched-time">Time</label><input id="sched-time" type="time" required></div>
+        </div>
+        <fieldset class="role-switch">
+          <legend>Mode</legend>
+          <div class="segments">
+            <label class="segment"><input type="radio" name="sched-mode" value="Online"><span>Online</span></label>
+            <label class="segment"><input type="radio" name="sched-mode" value="In person" checked><span>In person</span></label>
+          </div>
+        </fieldset>
+        <div class="field">
+          <label for="sched-duration">Duration</label>
+          <select id="sched-duration">
+            <option value="30">30 minutes</option>
+            <option value="45">45 minutes</option>
+            <option value="60">60 minutes</option>
+            <option value="90">90 minutes</option>
+          </select>
+        </div>
+        <button class="btn btn--solid auth-submit" type="submit" id="sched-submit">Confirm session</button>
+        <p class="dev-note">Demo only: nothing is sent to students yet.</p>
+      </form>
+    </div>
+  </dialog>
+
+  <!-- Group details dialog -->
+  <dialog id="group-dialog" class="auth" aria-labelledby="group-title">
+    <div class="auth-shell">
+      <div class="auth-top">
+        <h2 id="group-title"></h2>
+        <button class="panic-close" type="button" data-close-dialog>Close</button>
+      </div>
+      <div id="group-body" class="ws-groupbody"></div>
+    </div>
+  </dialog>
+
+  <div class="toast" id="ws-toast" role="status" aria-live="polite"></div>
+
+  <script>
+// Stillroom: log in / sign up dialog
+
+(() => {
+  /* ---------- Log in / sign up dialog ---------- */
+  const dialog = document.getElementById("auth-dialog");
+  if (!dialog || typeof dialog.showModal !== "function") return;
+
+  const COPY = {
+    student: {
+      label: "Student",
+      signupTitle: "Create your student account",
+      signupLede: "Check in with yourself, keep track of how you're doing, and book time with a counselor when you want it.",
+      loginLede: "Log in to see your check-ins and any sessions you've booked.",
+      emailLabel: "College email",
+      emailHint: false,
+      signupButton: "Create student account",
+      loginButton: "Log in as a student",
+      afterSignup: "Your account is ready. Check your inbox to confirm your email.",
+    },
+    counselor: {
+      label: "Counselor",
+      signupTitle: "Create your counselor account",
+      signupLede: "See student requests in one queue and follow each one from first message to follow-up.",
+      loginLede: "Log in to see today's requests and your upcoming sessions.",
+      emailLabel: "Work email",
+      emailHint: true,
+      signupButton: "Create counselor account",
+      loginButton: "Log in as a counselor",
+      afterSignup: "Thanks. We'll check your details with your college before you can see any student requests. You'll get an email when that's done.",
+    },
+  };
+
+  const form = document.getElementById("auth-form");
+  const done = document.getElementById("auth-done");
+  const title = document.getElementById("auth-title");
+  const lede = document.getElementById("auth-lede");
+  const emailLabel = document.getElementById("auth-email-label");
+  const emailHint = document.getElementById("auth-email-hint");
+  const passwordInput = document.getElementById("auth-password");
+  const passwordHint = document.getElementById("auth-password-hint");
+  const toggle = document.getElementById("auth-toggle");
+  const submit = document.getElementById("auth-submit");
+  const switchText = document.getElementById("auth-switch-text");
+  const switchButton = document.getElementById("auth-switch-btn");
+  const fieldName = document.getElementById("field-name");
+  const fieldOrg = document.getElementById("field-org");
+  const roleInputs = [...form.querySelectorAll('input[name="role"]')];
+
+  let mode = "login";
+  let role = "student";
+
+  // Hidden fields are also disabled, so the browser doesn't ask for them when it checks the form.
+  function showField(field, visible) {
+    field.hidden = !visible;
+    field.querySelectorAll("input").forEach((input) => {
+      input.disabled = !visible;
+    });
+  }
+
+  function render() {
+    const copy = COPY[role];
+    const isSignup = mode === "signup";
+
+    roleInputs.forEach((input) => {
+      input.checked = input.value === role;
+    });
+
+    title.textContent = isSignup ? copy.signupTitle : "Welcome back";
+    lede.textContent = isSignup ? copy.signupLede : copy.loginLede;
+    emailLabel.textContent = copy.emailLabel;
+    emailHint.hidden = !copy.emailHint;
+
+    showField(fieldName, isSignup);
+    showField(fieldOrg, isSignup && role === "counselor");
+
+    passwordInput.autocomplete = isSignup ? "new-password" : "current-password";
+    passwordInput.minLength = isSignup ? 8 : 0;
+    passwordHint.hidden = !isSignup;
+
+    submit.textContent = isSignup ? copy.signupButton : copy.loginButton;
+    switchText.textContent = isSignup ? "Already have an account?" : "New here?";
+    switchButton.textContent = isSignup ? "Log in" : "Sign up";
+  }
+
+  function openAuth(nextMode, nextRole) {
+    mode = nextMode;
+    if (nextRole) role = nextRole;
+
+    form.reset();
+    form.hidden = false;
+    done.hidden = true;
+    passwordInput.type = "password";
+    toggle.textContent = "Show";
+    toggle.setAttribute("aria-pressed", "false");
+    render();
+
+    if (!dialog.open) dialog.showModal();
+  }
+
+  // Any button with data-open-auth opens the dialog. data-role picks Student or Counselor.
+  document.addEventListener("click", (event) => {
+    const trigger = event.target.closest("[data-open-auth]");
+    if (!trigger) return;
+    openAuth(trigger.dataset.openAuth, trigger.dataset.role);
+  });
+
+  roleInputs.forEach((input) => {
+    input.addEventListener("change", () => {
+      role = input.value;
+      render();
+    });
+  });
+
+  switchButton.addEventListener("click", () => {
+    mode = mode === "signup" ? "login" : "signup";
+    render();
+  });
+
+  toggle.addEventListener("click", () => {
+    const show = passwordInput.type === "password";
+    passwordInput.type = show ? "text" : "password";
+    toggle.textContent = show ? "Hide" : "Show";
+    toggle.setAttribute("aria-pressed", String(show));
+  });
+
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
+
+    // TODO: send the form data (including the chosen role) to your backend here.
+    const copy = COPY[role];
+    const isSignup = mode === "signup";
+
+    // Counsellor log in opens the workspace (demo).
+    if (!isSignup && role === "counselor") {
+      dialog.close();
+      window.openCounsellorWorkspace();
+      return;
+    }
+
+    document.getElementById("auth-done-title").textContent = isSignup ? "You're all set" : "You're logged in";
+    document.getElementById("auth-done-text").textContent = isSignup
+      ? copy.afterSignup
+      : "Welcome back. Your " + copy.label.toLowerCase() + " dashboard would open here.";
+
+    form.hidden = true;
+    done.hidden = false;
+  });
+
+  dialog.querySelectorAll("[data-close-auth]").forEach((button) => {
+    button.addEventListener("click", () => dialog.close());
+  });
+
+  // Clicking the dimmed area outside the dialog closes it.
+  dialog.addEventListener("click", (event) => {
+    if (event.target === dialog) dialog.close();
+  });
+})();
+  </script>
+
+  <script>
+// Stillroom: panic support dialog
+// Breathing guide (4s in, 6s out), 5-4-3-2-1 grounding, and a "talk to someone" tab.
+// Nothing here is stored or sent anywhere.
+
+(() => {
+  const dialog = document.getElementById("panic-dialog");
+  if (!dialog || typeof dialog.showModal !== "function") return;
+
+  /* ---------- Tabs ---------- */
+
+  const tabs = [...dialog.querySelectorAll('[role="tab"]')];
+  const panels = {
+    breathe: document.getElementById("panel-breathe"),
+    ground: document.getElementById("panel-ground"),
+    talk: document.getElementById("panel-talk"),
+  };
+
+  function selectTab(name, { focus = false } = {}) {
+    tabs.forEach((tab) => {
+      const active = tab.dataset.tab === name;
+      tab.setAttribute("aria-selected", String(active));
+      tab.tabIndex = active ? 0 : -1;
+      if (active && focus) tab.focus();
+    });
+
+    Object.entries(panels).forEach(([key, panel]) => {
+      panel.hidden = key !== name;
+    });
+
+    if (name === "breathe") startBreathing();
+    else stopBreathing();
+
+    if (name === "ground") renderGround();
+  }
+
+  tabs.forEach((tab, index) => {
+    tab.addEventListener("click", () => selectTab(tab.dataset.tab));
+
+    // Arrow keys move between tabs, as people expect from tab lists.
+    tab.addEventListener("keydown", (event) => {
+      let next = null;
+      if (event.key === "ArrowRight") next = (index + 1) % tabs.length;
+      if (event.key === "ArrowLeft") next = (index - 1 + tabs.length) % tabs.length;
+      if (next === null) return;
+      event.preventDefault();
+      selectTab(tabs[next].dataset.tab, { focus: true });
+    });
+  });
+
+  dialog.querySelectorAll("[data-go-tab]").forEach((button) => {
+    button.addEventListener("click", () => selectTab(button.dataset.goTab, { focus: true }));
+  });
+
+  /* ---------- Breathing guide ---------- */
+
+  const circle = document.getElementById("breath-circle");
+  const label = document.getElementById("breath-label");
+  const count = document.getElementById("breath-count");
+
+  const phases = [
+    { text: "Breathe in", secs: 4, cls: "is-in" },
+    { text: "Breathe out", secs: 6, cls: "is-out" },
+  ];
+
+  let phaseIndex = 0;
+  let remaining = 0;
+  let timer = null;
+
+  function setPhase(index) {
+    phaseIndex = index;
+    remaining = phases[index].secs;
+    circle.style.setProperty("--phase-secs", `${phases[index].secs}s`);
+    circle.classList.remove("is-in", "is-out");
+    circle.classList.add(phases[index].cls);
+    label.textContent = phases[index].text;
+    count.textContent = remaining;
+  }
+
+  function tick() {
+    remaining -= 1;
+    if (remaining <= 0) {
+      setPhase((phaseIndex + 1) % phases.length);
+    } else {
+      count.textContent = remaining;
+    }
+  }
+
+  function startBreathing() {
+    stopBreathing();
+    circle.classList.remove("is-in", "is-out");
+    void circle.offsetWidth; // reset so the first breath animates from small
+    setPhase(0);
+    timer = setInterval(tick, 1000);
+  }
+
+  function stopBreathing() {
+    clearInterval(timer);
+    timer = null;
+  }
+
+  /* ---------- Grounding (5-4-3-2-1) ---------- */
+
+  const steps = [
+    { n: "5", prompt: "Name 5 things you can see.", hint: "Look around slowly. A pen, the window, your hands." },
+    { n: "4", prompt: "Notice 4 things you can touch.", hint: "The chair under you, your sleeve, the cool edge of a desk." },
+    { n: "3", prompt: "Listen for 3 things you can hear.", hint: "Nearby or far away. Fans, footsteps, your own breathing." },
+    { n: "2", prompt: "Find 2 things you can smell.", hint: "If you can't smell anything, think of two smells you like." },
+    { n: "1", prompt: "Name 1 thing you can taste.", hint: "Or take one slow sip of water." },
+    { n: "", prompt: "Well done. Take one more slow breath.", hint: "Notice how your body feels compared to a few minutes ago." },
+  ];
+
+  const groundCount = document.getElementById("ground-count");
+  const groundPrompt = document.getElementById("ground-prompt");
+  const groundHint = document.getElementById("ground-hint");
+  const groundDots = document.getElementById("ground-dots");
+  const groundBack = document.getElementById("ground-back");
+  const groundNext = document.getElementById("ground-next");
+  let groundIndex = 0;
+
+  groundDots.innerHTML = steps.slice(0, 5).map(() => "<span></span>").join("");
+
+  function renderGround() {
+    const step = steps[groundIndex];
+    const last = groundIndex === steps.length - 1;
+
+    groundCount.textContent = step.n;
+    groundPrompt.textContent = step.prompt;
+    groundHint.textContent = step.hint;
+    groundBack.disabled = groundIndex === 0;
+    groundBack.style.opacity = groundIndex === 0 ? "0.5" : "1";
+    groundNext.textContent = last ? "See who you can talk to" : "Next";
+
+    [...groundDots.children].forEach((dot, i) => {
+      dot.classList.toggle("is-done", i <= groundIndex);
+    });
+  }
+
+  groundBack.addEventListener("click", () => {
+    if (groundIndex > 0) {
+      groundIndex -= 1;
+      renderGround();
+    }
+  });
+
+  groundNext.addEventListener("click", () => {
+    if (groundIndex < steps.length - 1) {
+      groundIndex += 1;
+      renderGround();
+    } else {
+      selectTab("talk", { focus: true });
+    }
+  });
+
+  /* ---------- Open and close ---------- */
+
+  function openPanic() {
+    groundIndex = 0;
+    dialog.showModal();
+    selectTab("breathe");
+  }
+
+  document.querySelectorAll("[data-open-panic]").forEach((button) => {
+    button.addEventListener("click", openPanic);
+  });
+
+  dialog.querySelectorAll("[data-close-panic]").forEach((button) => {
+    button.addEventListener("click", () => dialog.close());
+  });
+
+  // Clicking the dimmed area outside the dialog closes it.
+  dialog.addEventListener("click", (event) => {
+    if (event.target === dialog) dialog.close();
+  });
+
+  // Covers Escape, the Close buttons and backdrop clicks.
+  dialog.addEventListener("close", stopBreathing);
+})();
+
+  </script>
+  <script>
+// Stillroom: counsellor workspace (demo data only)
+(() => {
+  const ws = document.getElementById("ws");
+  const root = document.getElementById("ws-root");
+  const tabsEl = document.getElementById("ws-tabs");
+  const schedDialog = document.getElementById("sched-dialog");
+  const groupDialog = document.getElementById("group-dialog");
+  const toastEl = document.getElementById("ws-toast");
+
+  /* ---------- Data layer ----------
+     Everything the UI reads or writes goes through Api. To connect a real
+     backend, replace these functions with fetch() calls that return the same
+     shapes; the rendering code below does not need to change. */
+  const DEMO = {
+    groups: [
+      {
+        id: "g1", name: "Placement & Rejection Stress",
+        context: "Students experiencing stress related to placement outcomes, rejection and career uncertainty.",
+        pattern: "Placement anxiety · rejection stress · reduced confidence",
+        students: [{ name: "Student A", severity: "moderate" }, { name: "Student B", severity: "moderate" }, { name: "Student C", severity: "moderate" }],
+        session: { date: "2026-10-04", time: "15:00", mode: "In Person", duration: 60 },
+      },
+      {
+        id: "g2", name: "Anxiety & Public Speaking",
+        context: "Students experiencing anxiety around presentations, public speaking and academic participation.",
+        pattern: "Presentation anxiety · avoidance · academic participation",
+        students: [{ name: "Student D", severity: "moderate" }, { name: "Student E", severity: "low" }],
+        session: { date: "2026-10-06", time: "11:00", mode: "In person", duration: 60 },
+      },
+    ],
+    studentF: {
+      name: "Student F", severity: "high",
+      context: "AI-assisted screening has identified multiple recent wellbeing signals requiring counsellor review.",
+      signals: [
+        { label: "Recent wellbeing decline", note: "Mood check-ins have trended down over the last two weeks." },
+        { label: "Elevated stress indicators", note: "Stress-related language is appearing more often in recent entries." },
+        { label: "Repeated negative check-ins", note: "Several recent check-ins were marked low or negative." },
+        { label: "No recent counselling session", note: "There is no counselling contact on record recently." },
+      ],
+      recommended: "1:1 counselling session",
+      suggested: { date: "2026-10-03", time: "14:30", mode: "In person", duration: 45 },
+      trend: [72, 70, 71, 66, 64, 62, 58, 55, 52, 50, 47, 44, 41, 38],
+      aiContext: "Over the last two weeks Student F's check-ins have moved from mostly steady to consistently low, with stress-related words appearing more often in recent entries. There has been no counselling contact in that period. These patterns suggest a counsellor should look at this case soon.",
+      scheduled: null, review: null,
+    },
+    response: {
+      detected: "2026-10-02T16:20", deadline: "2026-10-03T16:20",
+      contacted: null, record: null, completed: false,
+    },
+    activity: [],
+  };
+
+  const state = JSON.parse(JSON.stringify(DEMO));
+  let view = "today";
+  let groupFilter = "all";
+
+  // Demo clock: starts at 6:05 PM on 02 Oct 2026 and runs in real time.
+  const NOW0 = Date.parse("2026-10-02T18:05:00");
+  const T0 = Date.now();
+  const now = () => NOW0 + (Date.now() - T0);
+
+  const done = (v) => Promise.resolve(v);
+  const Api = {
+    scheduleGroup: (id, session) => { state.groups.find((g) => g.id === id).session = session; return done(session); },
+    scheduleOneToOne: (session) => { state.studentF.scheduled = session; return done(session); },
+    saveAssessment: (review) => { state.studentF.review = review; return done(review); },
+    recordResponse: (record) => { state.response.record = record; state.response.completed = true; return done(record); },
+  };
+
+  /* ---------- Helpers ---------- */
+  const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+  const fmtDate = (d) => { const [y, m, day] = d.slice(0, 10).split("-"); return `${day} ${MONTHS[+m - 1]} ${y}`; };
+  const fmtTime = (t) => { let [h, m] = t.split(":").map(Number); const ap = h >= 12 ? "PM" : "AM"; h = h % 12 || 12; return `${h}:${String(m).padStart(2, "0")} ${ap}`; };
+  const fmtStamp = (iso) => `${fmtDate(iso)} · ${fmtTime(iso.slice(11, 16))}`;
+  const fmtSession = (s) => `${fmtDate(s.date)} · ${fmtTime(s.time)}`;
+  const sev = (s) => `<span class="sev sev--${s}">${s}</span>`;
+  const nowClock = () => { const d = new Date(now()); return fmtTime(`${d.getHours()}:${d.getMinutes()}`); };
+
+  function log(text) { state.activity.unshift({ at: nowClock(), text }); }
+
+  function clock() {
+    const r = state.response;
+    const total = Date.parse(r.deadline) - Date.parse(r.detected);
+    const left = Math.max(0, Date.parse(r.deadline) - now());
+    const pct = Math.min(100, Math.max(0, ((now() - Date.parse(r.detected)) / total) * 100));
+    return { h: Math.floor(left / 3.6e6), m: Math.floor((left % 3.6e6) / 6e4), pct };
+  }
+  const leftText = () => { const c = clock(); return `${c.h}h ${String(c.m).padStart(2, "0")}m left`; };
+
+  let toastTimer;
+  function toast(msg) {
+    toastEl.textContent = msg;
+    toastEl.classList.add("is-on");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toastEl.classList.remove("is-on"), 3200);
+  }
+
+  /* ---------- Shared pieces ---------- */
+  function path() {
+    const f = state.studentF, r = state.response;
+    const steps = [
+      { t: "Review analysis", d: !!f.review, s: f.review ? "Assessment saved" : "Read the signals", go: "analysis" },
+      { t: "Schedule 1:1", d: !!f.scheduled, s: f.scheduled ? fmtSession(f.scheduled) : "In person, 45 min", go: "priority" },
+      { t: "Contact student", d: !!r.contacted || r.completed, s: r.completed || r.contacted ? r.record ? r.record.method : r.contacted : "Within 24 hours", go: "response" },
+      { t: "Record outcome", d: r.completed, s: r.completed ? r.record.outcome : "Close the loop", go: "response" },
+    ];
+    const next = steps.findIndex((s) => !s.d);
+    return `<ol class="path" aria-label="Student F: steps for today">${steps.map((s, i) => `
+      <li class="${s.d ? "is-done" : i === next ? "is-next" : ""}">
+        <button type="button" data-ws-go="${s.go}">
+          <span class="n" aria-hidden="true">${s.d ? "✓" : i + 1}</span>
+          <span class="t">${s.t}</span>
+          <span class="s">${esc(s.s)}${s.d ? " · done" : i === next ? " · next" : ""}</span>
+        </button>
+      </li>`).join("")}</ol>`;
+  }
+
+  function upcoming(allowEdit) {
+    const items = state.groups.map((g) => ({ kind: "Group", title: g.name, s: g.session, id: g.id }));
+    if (state.studentF.scheduled) items.push({ kind: "1:1", title: "Student F · counselling", s: state.studentF.scheduled, id: "f" });
+    items.sort((a, b) => (a.s.date + a.s.time).localeCompare(b.s.date + b.s.time));
+    return `<ul class="sched-list">${items.map((i) => `
+      <li class="sched-item">
+        <div class="when"><strong>${fmtSession(i.s)}</strong><small>${esc(i.title)} · ${esc(i.s.mode)} · ${i.s.duration} min</small></div>
+        <span class="sev ${i.kind === "1:1" ? "sev--sched" : "sev--moderate"}">${i.kind}</span>
+        ${allowEdit ? `<button class="btn btn--quiet" type="button" data-ws-action="${i.id === "f" ? "schedule-f" : "schedule-group"}" data-id="${i.id}">Change</button>` : ""}
+      </li>`).join("")}</ul>`;
+  }
+
+  function activity() {
+    return state.activity.length
+      ? `<ul class="log">${state.activity.slice(0, 6).map((a) => `<li><time>${a.at}</time><span>${esc(a.text)}</span></li>`).join("")}</ul>`
+      : '<p class="log-empty">Nothing yet. Actions you take today will show up here.</p>';
+  }
+
+  function priorityCard() {
+    const f = state.studentF;
+    const sched = f.scheduled
+      ? `<div class="panel"><h4>Session scheduled</h4><p><strong>${fmtSession(f.scheduled)}</strong><br>${esc(f.scheduled.mode)} · ${f.scheduled.duration} minutes · 1:1 counselling</p></div>`
+      : `<div class="panel panel--lilac"><h4>Recommended action</h4><p><strong>${esc(f.recommended)}</strong></p></div>`;
+    return `
+      <article class="card card--priority" aria-labelledby="pf-name">
+        <div class="card-top">
+          <span class="sev sev--high">High priority</span>
+          ${f.review ? '<span class="sev sev--done">Reviewed</span>' : ""}
+        </div>
+        <div><h3 id="pf-name">${esc(f.name)}</h3><p class="card-sub" style="margin-top:.4rem">${esc(f.context)}</p></div>
+        <div><p class="label">Signals · tap for detail</p>
+          <div class="sig-list">${f.signals.map((s) => `<details class="sig"><summary>${esc(s.label)}</summary><p>${esc(s.note)}</p></details>`).join("")}</div></div>
+        ${sched}
+        <div class="card-actions">
+          <button class="btn btn--solid" type="button" data-ws-action="schedule-f">${f.scheduled ? "Reschedule 1:1" : "Schedule 1:1"}</button>
+          <button class="btn btn--outline" type="button" data-ws-action="analysis">Review Analysis</button>
+        </div>
+      </article>`;
+  }
+
+  function responseCard() {
+    const r = state.response, f = state.studentF, c = clock();
+    let status, body;
+    if (r.completed) {
+      status = '<span class="sev sev--done">Completed</span>';
+      body = `
+        <div class="panel"><h4>24-hour follow-up completed</h4>
+          <p>${esc(r.record.method)} · ${esc(r.record.outcome)}</p>
+          ${r.record.notes ? `<p class="card-sub" style="margin-top:.4rem">${esc(r.record.notes)}</p>` : ""}
+          ${r.record.outcome === "Unable to reach" ? '<p class="card-sub" style="margin-top:.4rem">Consider trying again or asking a colleague to help.</p>' : ""}
+        </div>`;
+    } else {
+      status = '<span class="sev sev--high">Action required</span>';
+      const m = r.contacted;
+      body = m ? `
+        <form class="record" id="record-form" novalidate>
+          <p class="card-sub" style="margin-bottom:1rem">Simulated: ${m === "Phone" ? "a call to the student would start here." : "a Meet link would open here."} When you've spoken, record what happened.</p>
+          <p class="label">Record response</p>
+          <fieldset class="role-switch"><legend>Contact method</legend>
+            <div class="segments">
+              <label class="segment"><input type="radio" name="rec-method" value="Online Meet" ${m === "Online Meet" ? "checked" : ""}><span>Online Meet</span></label>
+              <label class="segment"><input type="radio" name="rec-method" value="Phone" ${m === "Phone" ? "checked" : ""}><span>Phone</span></label>
+            </div>
+          </fieldset>
+          <fieldset class="choices" style="margin-bottom:1.25rem"><legend>Outcome</legend>
+            ${["Student connected", "Follow-up required", "Escalated to specialist", "Unable to reach"].map((o) => `<label class="choice"><input type="radio" name="rec-outcome" value="${o}"><span>${o}</span></label>`).join("")}
+          </fieldset>
+          <div class="field"><label for="rec-notes">Notes</label><textarea id="rec-notes" placeholder="What did you agree with the student?"></textarea></div>
+          <p class="form-error" id="rec-error" role="alert" hidden>Please choose an outcome first.</p>
+          <button class="btn btn--solid" type="submit">Mark Follow-up Complete</button>
+        </form>` : `
+        <div class="card-actions">
+          <button class="btn btn--solid" type="button" data-ws-action="contact" data-method="Online Meet">Online Meet</button>
+          <button class="btn btn--outline" type="button" data-ws-action="contact" data-method="Phone">Call Student</button>
+        </div>`;
+    }
+    const timer = r.completed
+      ? `<div class="meter meter--done"><i style="width:100%"></i></div><p class="meter-legend"><span>Detected</span><span>Contacted within the window</span></p>`
+      : `<p class="big-time" data-countdown>${leftText()}</p>
+         <div class="meter" role="img" aria-label="Share of the 24 hours already used"><i data-countbar style="width:${c.pct.toFixed(1)}%"></i></div>
+         <p class="meter-legend"><span>Detected</span><span>Deadline</span></p>`;
+    const inside = f.scheduled && !r.completed
+      ? `<p class="card-sub">The 1:1 on ${fmtSession(f.scheduled)} is inside this window. A booking on its own doesn't count as contact.</p>` : "";
+    return `
+      <article class="card" aria-labelledby="resp-title">
+        <div class="card-top"><h3 id="resp-title">${esc(f.name)}</h3>${status}</div>
+        <p class="card-sub">High-severity students should hear from a counsellor within 24 hours.</p>
+        ${timer}
+        <div class="deadline">
+          <div class="panel"><h4>Detected</h4><b>${fmtStamp(r.detected)}</b></div>
+          <div class="panel panel--lilac"><h4>Response deadline</h4><b>${fmtStamp(r.deadline)}</b></div>
+        </div>
+        ${inside}
+        ${body}
+      </article>`;
+  }
+
+  function groupCard(g) {
+    return `
+      <article class="card" aria-labelledby="${g.id}-name">
+        <div class="card-top"><h3 id="${g.id}-name">${esc(g.name)}</h3><span class="card-sub">${g.students.length} students</span></div>
+        <p class="card-sub">${esc(g.context)}</p>
+        <div><p class="label">Common pattern</p><p class="pattern">${esc(g.pattern)}</p></div>
+        <details class="roster"><summary>Students (${g.students.length})</summary>
+          <ul>${g.students.map((s) => `<li><span>${esc(s.name)}</span>${sev(s.severity)}</li>`).join("")}</ul></details>
+        <div class="panel"><h4>Next group session</h4>
+          <div class="session-line"><strong>${fmtSession(g.session)}</strong><span>${esc(g.session.mode)} · ${g.session.duration} min</span></div>
+        </div>
+        <div class="card-actions">
+          <button class="btn btn--solid" type="button" data-ws-action="view-group" data-id="${g.id}">View Group</button>
+          <button class="btn btn--outline" type="button" data-ws-action="schedule-group" data-id="${g.id}">Schedule Meeting</button>
+        </div>
+      </article>`;
+  }
+
+  /* ---------- Sections ---------- */
+  function today() {
+    const f = state.studentF, r = state.response;
+    const rows = [];
+    if (!r.completed) rows.push({ go: "response", sev: "high", t: "Contact Student F within 24 hours", s: "High priority · deadline " + fmtStamp(r.deadline), r: `<span data-countdown>${leftText()}</span>` });
+    if (!f.scheduled) rows.push({ go: "priority", sev: "high", t: "Schedule a 1:1 with Student F", s: "Recommended: in person, 45 minutes", r: "Schedule" });
+    if (!f.review) rows.push({ go: "analysis", sev: "high", t: "Review Student F's analysis", s: "Screening support only. You decide the next step.", r: "Review" });
+    state.groups.forEach((g) => rows.push({ go: "groups", sev: "moderate", t: g.name, s: `Group session ${fmtSession(g.session)} · ${g.session.mode}`, r: "Open" }));
+    const openCount = (r.completed ? 0 : 1) + (f.scheduled ? 0 : 1) + (f.review ? 0 : 1);
+    return `
+      <section aria-labelledby="ws-h1" style="padding-block:clamp(.5rem,2vw,1.5rem) 0">
+        <p class="ws-eyebrow">Stillroom · Counsellor workspace</p>
+        <h1 id="ws-h1" tabindex="-1" style="font-size:clamp(2.2rem,5vw,3.4rem);letter-spacing:-.015em;max-width:26ch">Who needs your attention today?</h1>
+        <p class="ws-lede">${r.completed ? "Student F has been contacted. Your groups are on track." : `Student F needs contact within <b data-countdown-short>${leftText().replace(" left", "")}</b>. Your two groups are on track.`}</p>
+        <div class="stats">
+          <button class="stat ${r.completed ? "" : "stat--alert"}" type="button" data-ws-go="response"><b>${r.completed ? "0" : "1"}</b><span>24-hour response ${r.completed ? "· all done" : "· action required"}</span></button>
+          <button class="stat" type="button" data-ws-go="priority"><b>${openCount}</b><span>open ${openCount === 1 ? "task" : "tasks"} for Student F</span></button>
+          <button class="stat" type="button" data-ws-go="groups"><b>${state.groups.length}</b><span>assigned groups</span></button>
+        </div>
+      </section>
+
+      <section class="ws-section" aria-labelledby="path-h">
+        <h2 id="path-h" style="font-size:1.5rem">Student F · today's path</h2>
+        <p class="ws-section-lede">Tap a step to jump to it. The highlighted one is next.</p>
+        ${path()}
+      </section>
+
+      <section class="ws-section" aria-labelledby="attn-h">
+        <h2 id="attn-h" style="font-size:1.5rem">Needs your attention</h2>
+        <p class="ws-section-lede">Most urgent first.</p>
+        <ul class="attn">${rows.map((x) => `
+          <li><button class="attn-row" type="button" data-ws-go="${x.go}">
+            ${sev(x.sev)}<span class="grow"><strong>${esc(x.t)}</strong><small>${esc(x.s)}</small></span><span class="go">${x.r}</span>
+          </button></li>`).join("")}</ul>
+      </section>
+
+      <div class="ws-two ws-section">
+        <section class="card" aria-labelledby="up-h"><h3 id="up-h">Upcoming sessions</h3>${upcoming(true)}</section>
+        <section class="card" aria-labelledby="act-h"><h3 id="act-h">Recent activity</h3>${activity()}</section>
+      </div>`;
+  }
+
+  function priority() {
+    return `
+      <div class="view-head"><div><h2 id="ws-h1" tabindex="-1">High priority</h2><p>Flagged by AI-assisted screening. You decide what happens next.</p></div></div>
+      ${path()}
+      <div class="ws-section" style="margin-top:1.5rem"><div class="ws-two">
+        ${priorityCard()}
+        <section class="card" aria-labelledby="up2-h"><h3 id="up2-h">Upcoming sessions</h3>${upcoming(true)}</section>
+      </div></div>`;
+  }
+
+  function response() {
+    return `
+      <div class="view-head"><div><h2 id="ws-h1" tabindex="-1">24-hour response</h2><p>Contact within the deadline, then record what happened.</p></div></div>
+      <div class="ws-two">
+        ${responseCard()}
+        <section class="card" aria-labelledby="path2-h"><h3 id="path2-h">Steps for Student F</h3><div class="path-stack">${path()}</div></section>
+      </div>`;
+  }
+
+  function groups() {
+    const list = state.groups.filter((g) => groupFilter === "all" || g.session.mode === groupFilter);
+    const chip = (v, l) => `<button class="panic-tab" type="button" role="tab" aria-selected="${groupFilter === v}" data-ws-filter="${v}">${l}</button>`;
+    return `
+      <div class="view-head"><div><h2 id="ws-h1" tabindex="-1">Assigned groups</h2><p>Students with a shared pattern, so you can support them together.</p></div>
+        <div class="filters" role="tablist" aria-label="Filter by session mode">${chip("all", "All")}${chip("Online", "Online")}${chip("In person", "In person")}</div></div>
+      ${list.length ? `<div class="ws-groups">${list.map(groupCard).join("")}</div>` : '<div class="attn-empty">No groups with that session mode.</div>'}
+      <section class="card" style="margin-top:1.25rem" aria-labelledby="up3-h"><h3 id="up3-h">Upcoming sessions</h3>${upcoming(true)}</section>`;
+  }
+
+  function trendChart(vals) {
+    const W = 600, H = 170, P = 28;
+    const x = (i) => P + (i * (W - 2 * P)) / (vals.length - 1);
+    const y = (v) => H - P - ((v - 20) / 60) * (H - 2 * P);
+    const pts = vals.map((v, i) => `${x(i).toFixed(1)},${y(v).toFixed(1)}`).join(" ");
+    const last = vals.length - 1;
+    return `<svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Check-in mood index over 14 days, falling from ${vals[0]} to ${vals[last]}">
+      <line x1="${P}" y1="${H - P}" x2="${W - P}" y2="${H - P}" stroke="rgba(30,59,76,.16)"/>
+      <line x1="${P}" y1="${y(50)}" x2="${W - P}" y2="${y(50)}" stroke="rgba(30,59,76,.16)" stroke-dasharray="4 6"/>
+      <polyline points="${pts}" fill="none" stroke="#1e3b4c" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+      <circle cx="${x(0)}" cy="${y(vals[0])}" r="5" fill="#a9cfc4" stroke="#1e3b4c" stroke-width="2"/>
+      <circle cx="${x(last)}" cy="${y(vals[last])}" r="7" fill="#54489c"/>
+      <text x="${P}" y="${H - 6}">14 days ago</text>
+      <text x="${W - P}" y="${H - 6}" text-anchor="end">Today</text>
+    </svg>`;
+  }
+
+  function analysis() {
+    const f = state.studentF, rv = f.review;
+    const outcomes = ["Continue monitoring", "Schedule follow-up", "Refer to specialist", "Resolve case"];
+    return `
+      <div class="view-head"><div>
+        <button class="btn btn--quiet back" type="button" data-ws-go="priority">← Back to high priority</button>
+        <h2 id="ws-h1" tabindex="-1">${esc(f.name)}</h2>
+        <p>Current severity: <span class="sev sev--high" style="margin-left:.3rem">High</span></p></div></div>
+
+      <div class="panel panel--lilac" role="note" style="margin-bottom:1.25rem">
+        <h4>Screening support, not a diagnosis</h4>
+        <p>This summary is AI-assisted screening to help you decide where to look. It is not a diagnosis. You are responsible for the intervention decision.</p>
+      </div>
+
+      <div class="ws-two">
+        <div class="card">
+          <h3>Recent wellbeing trend</h3>
+          <p class="card-sub">Check-in mood index (demo data), last 14 days. Lower means lower mood.</p>
+          ${trendChart(f.trend)}
+        </div>
+        <div class="card">
+          <h3>Key signals</h3>
+          <div class="sig-list">${f.signals.map((s) => `<details class="sig"><summary>${esc(s.label)}</summary><p>${esc(s.note)}</p></details>`).join("")}</div>
+          <div class="panel"><h4>AI-generated context</h4><p>${esc(f.aiContext)}</p></div>
+        </div>
+      </div>
+
+      <section class="card" style="margin-top:1.25rem" aria-labelledby="review-h">
+        <p class="label" style="margin:0">Counsellor only</p>
+        <h3 id="review-h">Counsellor review</h3>
+        ${rv ? `<p class="saved-note" role="status">Assessment saved: ${esc(rv.outcome)}</p>` : ""}
+        <form id="review-form" novalidate>
+          <div class="field"><label for="rv-notes">Notes</label>
+            <textarea id="rv-notes" placeholder="Your own observations and reasoning">${rv ? esc(rv.notes) : ""}</textarea></div>
+          <fieldset class="choices" style="margin-bottom:1.25rem"><legend>Outcome</legend>
+            ${outcomes.map((o) => `<label class="choice"><input type="radio" name="rv-outcome" value="${o}" ${rv && rv.outcome === o ? "checked" : ""}><span>${o}</span></label>`).join("")}
+          </fieldset>
+          <p class="form-error" id="rv-error" role="alert" hidden>Please choose an outcome before saving.</p>
+          <button class="btn btn--solid" type="submit">Save Assessment</button>
+        </form>
+      </section>`;
+  }
+
+  /* ---------- Render ---------- */
+  const TABS = [["today", "Today"], ["priority", "High priority"], ["response", "24-hour response"], ["groups", "Groups"]];
+
+  function renderTabs() {
+    const r = state.response;
+    const badge = { priority: r.completed && state.studentF.scheduled ? "" : "1", response: r.completed ? "" : "!", groups: String(state.groups.length) };
+    const active = view === "analysis" ? "priority" : view;
+    tabsEl.innerHTML = TABS.map(([id, label]) => `
+      <button class="panic-tab" type="button" role="tab" aria-selected="${active === id}" data-ws-go="${id}">${label}${badge[id] ? `<span class="tab-badge ${id === "groups" ? "tab-badge--quiet" : ""}">${badge[id]}</span>` : ""}</button>`).join("");
+  }
+
+  const VIEWS = { today, priority, response, groups, analysis };
+  function render(focusHeading) {
+    renderTabs();
+    root.innerHTML = `<div class="ws-view">${VIEWS[view]()}</div>`;
+    if (focusHeading) {
+      ws.scrollTo({ top: 0 });
+      const h = document.getElementById("ws-h1");
+      if (h) h.focus({ preventScroll: true });
+    }
+  }
+  function go(v) { view = v; render(true); }
+
+  // Keep the countdown live without re-rendering forms.
+  setInterval(() => {
+    if (ws.hidden) return;
+    document.querySelectorAll("[data-countdown]").forEach((el) => { el.textContent = leftText(); });
+    document.querySelectorAll("[data-countdown-short]").forEach((el) => { el.textContent = leftText().replace(" left", ""); });
+    document.querySelectorAll("[data-countbar]").forEach((el) => { el.style.width = clock().pct.toFixed(1) + "%"; });
+  }, 15000);
+
+  /* ---------- Dialogs ---------- */
+  let schedTarget = null;
+  function openSchedule(target) {
+    schedTarget = target;
+    const one = target.type === "f";
+    const g = one ? null : state.groups.find((x) => x.id === target.id);
+    const s = one ? (state.studentF.scheduled || state.studentF.suggested) : g.session;
+    document.getElementById("sched-title").textContent = one ? "Schedule a 1:1 with Student F" : "Schedule a meeting for " + g.name;
+    document.getElementById("sched-lede").textContent = one
+      ? "In-person counselling is recommended. You can change anything below."
+      : "Pick a time for the whole group. Students would be notified once this is connected.";
+    document.getElementById("sched-date").value = s.date;
+    document.getElementById("sched-time").value = s.time;
+    document.getElementById("sched-duration").value = String(s.duration);
+    document.querySelectorAll('input[name="sched-mode"]').forEach((i) => { i.checked = i.value === s.mode; });
+    document.getElementById("sched-submit").textContent = one ? "Confirm 1:1 session" : "Confirm meeting";
+    schedDialog.showModal();
+  }
+
+  document.getElementById("sched-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const session = {
+      date: document.getElementById("sched-date").value,
+      time: document.getElementById("sched-time").value,
+      mode: document.querySelector('input[name="sched-mode"]:checked').value,
+      duration: Number(document.getElementById("sched-duration").value),
+    };
+    const t = schedTarget;
+    schedDialog.close();
+    if (t.type === "f") { await Api.scheduleOneToOne(session); log("Scheduled 1:1 with Student F for " + fmtSession(session)); toast("1:1 scheduled for " + fmtSession(session)); }
+    else { const g = state.groups.find((x) => x.id === t.id); await Api.scheduleGroup(t.id, session); log(`Set “${g.name}” for ${fmtSession(session)}`); toast("Group meeting set for " + fmtSession(session)); }
+    render();
+  });
+
+  function openGroup(id) {
+    const g = state.groups.find((x) => x.id === id);
+    document.getElementById("group-title").textContent = g.name;
+    document.getElementById("group-body").innerHTML = `
+      <p class="auth-lede" style="margin:0">${esc(g.context)}</p>
+      <div class="panel"><h4>Common pattern</h4><p class="pattern">${esc(g.pattern)}</p></div>
+      <div><p class="label">Students</p>
+        <ul class="student-list">${g.students.map((s) => `<li>${esc(s.name)} ${sev(s.severity)}</li>`).join("")}</ul></div>
+      <div class="panel"><h4>Next group session</h4>
+        <div class="session-line"><strong>${fmtSession(g.session)}</strong><span>${esc(g.session.mode)} · ${g.session.duration} min</span></div></div>
+      <div class="card-actions">
+        <button class="btn btn--solid" type="button" data-ws-action="schedule-group" data-id="${g.id}">Schedule Meeting</button>
+        <button class="btn btn--outline" type="button" data-close-dialog>Close</button>
+      </div>`;
+    groupDialog.showModal();
+  }
+
+  [schedDialog, groupDialog].forEach((d) => d.addEventListener("click", (e) => { if (e.target === d) d.close(); }));
+  document.addEventListener("click", (e) => { if (e.target.closest("[data-close-dialog]")) e.target.closest("dialog").close(); });
+  groupDialog.addEventListener("click", (e) => {
+    const b = e.target.closest("[data-ws-action='schedule-group']");
+    if (b) { groupDialog.close(); openSchedule({ type: "g", id: b.dataset.id }); }
+  });
+
+  /* ---------- Events ---------- */
+  ws.addEventListener("click", (e) => {
+    const goBtn = e.target.closest("[data-ws-go]");
+    if (goBtn) { e.preventDefault(); go(goBtn.dataset.wsGo === "analysis" ? "analysis" : goBtn.dataset.wsGo); return; }
+    const filt = e.target.closest("[data-ws-filter]");
+    if (filt) { groupFilter = filt.dataset.wsFilter; render(); return; }
+    const btn = e.target.closest("[data-ws-action]");
+    if (!btn) return;
+    e.preventDefault();
+    const a = btn.dataset.wsAction;
+    if (a === "logout") { ws.hidden = true; return; }
+    if (a === "home") go("today");
+    if (a === "analysis") go("analysis");
+    if (a === "schedule-f") openSchedule({ type: "f" });
+    if (a === "view-group") openGroup(btn.dataset.id);
+    if (a === "schedule-group") openSchedule({ type: "g", id: btn.dataset.id });
+    if (a === "contact") {
+      state.response.contacted = btn.dataset.method;
+      log("Started " + (btn.dataset.method === "Phone" ? "a call" : "an online meet") + " with Student F (simulated)");
+      render();
+      document.getElementById("record-form").scrollIntoView({ block: "center", behavior: "smooth" });
+    }
+  });
+
+  ws.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    if (e.target.id === "review-form") {
+      const o = e.target.querySelector('input[name="rv-outcome"]:checked');
+      if (!o) { document.getElementById("rv-error").hidden = false; return; }
+      await Api.saveAssessment({ outcome: o.value, notes: document.getElementById("rv-notes").value.trim() });
+      log("Saved assessment for Student F: " + o.value);
+      toast("Assessment saved");
+      render();
+    }
+    if (e.target.id === "record-form") {
+      const o = e.target.querySelector('input[name="rec-outcome"]:checked');
+      const m = e.target.querySelector('input[name="rec-method"]:checked');
+      if (!o || !m) { document.getElementById("rec-error").hidden = false; return; }
+      await Api.recordResponse({ method: m.value, outcome: o.value, notes: document.getElementById("rec-notes").value.trim() });
+      log("24-hour follow-up completed: " + o.value);
+      toast("24-hour follow-up completed");
+      render();
+    }
+  });
+
+  /* ---------- Entry point: called by the counsellor log in ---------- */
+  function openWorkspace() {
+    view = "today";
+    ws.hidden = false;
+    render(true);
+  }
+  window.openCounsellorWorkspace = openWorkspace;
+  document.addEventListener("stillroom:counsellor-login", openWorkspace);
+})();
+  </script>
+</body>
+</html>
