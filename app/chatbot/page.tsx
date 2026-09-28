@@ -1,6 +1,7 @@
 "use client";
  
 import { useEffect, useMemo, useRef, useState } from "react";
+import Link from "next/link";
 import type { Assessment, ChatMessage, GeminiResponse } from "@/lib/types";
  
 // Another page (e.g. triage/routing) can read this key from sessionStorage.
@@ -154,18 +155,33 @@ export default function ChatbotPage() {
       {/* Conversation */}
       <section className="flex min-w-0 flex-1 flex-col">
         <header className="border-b border-slate-200 bg-white px-4 py-3 lg:px-8">
-          <div className="flex items-center gap-3">
-            <BotAvatar />
-            <div className="min-w-0">
-              <p className="font-semibold leading-tight">Student Support</p>
-              <p className="truncate text-xs text-slate-500 lg:hidden">{statusLabel}</p>
-              <p className="hidden text-xs text-slate-500 lg:block">A relaxed chat to work out what would help</p>
-            </div>
-          </div>
-          <div className="mt-3 h-1 overflow-hidden rounded-full bg-slate-100 lg:hidden">
-            <div className="h-full rounded-full bg-teal-600 transition-all duration-700" style={{ width: `${progress}%` }} />
-          </div>
-        </header>
+  <div className="flex items-center justify-between gap-3">
+    <div className="flex min-w-0 items-center gap-3">
+      <BotAvatar />
+      <div className="min-w-0">
+        <p className="font-semibold leading-tight">Student Support</p>
+        <p className="truncate text-xs text-slate-500 lg:hidden">{statusLabel}</p>
+        <p className="hidden text-xs text-slate-500 lg:block">
+          A relaxed chat to work out what would help
+        </p>
+      </div>
+    </div>
+
+    <Link
+      href="/dashboard"
+      className="shrink-0 rounded-xl border border-teal-600 px-3 py-2 text-sm font-medium text-teal-700 transition-colors hover:bg-teal-50"
+    >
+      Go to Dashboard
+    </Link>
+  </div>
+
+  <div className="mt-3 h-1 overflow-hidden rounded-full bg-slate-100 lg:hidden">
+    <div
+      className="h-full rounded-full bg-teal-600 transition-all duration-700"
+      style={{ width: `${progress}%` }}
+    />
+  </div>
+</header>
  
         <div className="flex-1 overflow-y-auto px-4 py-6 lg:px-8">
           <div className="mx-auto flex max-w-2xl flex-col gap-5">

@@ -1048,13 +1048,9 @@ a {
                 <p className="roles-label">Or get started as</p>
 
                 <div className="role-buttons">
-                  <button
-                    className="btn btn--solid"
-                    type="button"
-                    onClick={() => openAuth("signup", "student")}
-                  >
-                    I'm a student
-                  </button>
+                  <Link className="btn btn--solid" href="/chatbot">
+  I'm a student
+</Link>
 
                   <button
                     className="btn btn--outline"
